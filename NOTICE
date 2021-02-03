@@ -1,0 +1,9 @@
+secrethub-java
+Copyright 2021 Jason Shobe
+
+This product contains the secrethub-go client library (https://secrethub.io).
+Copyright (c) 2018-2021 SecretHub. All rights reserved.
+
+This product contains the Java Native Access library
+(https://github.com/java-native-access/jna).
+Copyright (c) 2007 Timothy Wall, All rights reserved.
