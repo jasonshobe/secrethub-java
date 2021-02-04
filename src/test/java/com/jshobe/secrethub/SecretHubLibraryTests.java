@@ -81,9 +81,9 @@ class SecretHubLibraryTests {
       String message = Client.getErrorMessage(errMessage);
       assertNull(message);
       assertNotNull(version);
-      assertEquals("0dd95e7b-a5c3-4982-b80c-6bd9e4e33c56", version.SecretVersionID);
-      assertEquals(1, version.Version);
-      assertEquals(1612384987L, version.CreatedAt);
+      assertEquals("e86d9e8f-aa9d-40bd-a52c-515bbcfb6b40", version.SecretVersionID);
+      assertEquals(2, version.Version);
+      assertEquals(1612407296L, version.CreatedAt);
       assertEquals("ok", version.Status);
       assertNotNull(version.Secret);
       assertEquals("89e453e1-4962-48cf-afc0-4f169c49da6b", version.Secret.SecretID);
@@ -91,8 +91,8 @@ class SecretHubLibraryTests {
       assertEquals("11843657-61ed-49e1-996e-b124bc4ec28e", version.Secret.RepoID);
       assertEquals("test", version.Secret.Name);
       assertEquals("xwzC2LKr6lwNHW2odRkCcgKuevUC_VW8NeNizsSEG6g=", version.Secret.BlindName);
-      assertEquals(1, version.Secret.VersionCount);
-      assertEquals(1, version.Secret.LatestVersion);
+      assertEquals(2, version.Secret.VersionCount);
+      assertEquals(2, version.Secret.LatestVersion);
       assertEquals("ok", version.Secret.Status);
       assertEquals(1612384987L, version.Secret.CreatedAt);
       assertEquals("SUCCESS", version.Data);
