@@ -21,7 +21,13 @@ jobs:
       - name: Build with Gradle
         env:
           SECRETHUB_CREDENTIAL: ${{ secrets.SECRETHUB_CREDENTIAL }}
-        run: ./gradlew build -PincludeIntegrationTests=true
+        run: ./gradlew build -PincludeIntegrationTests=true -PverifyCoverage=true --console=plain --no-daemon
+      - name: Publish Unit Test Results
+        uses: docker://ghcr.io/enricomi/publish-unit-test-result-action:latest
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          files: build/test-results/test/**/*.xml
       - name: Clean Gradle cache
         run: |
           rm -f ~/.gradle/caches/modules-2.lock

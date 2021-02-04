@@ -160,7 +160,6 @@ class SecretHubLibraryTests {
     @Test
     @DisplayName("should resolve environment")
     void shouldResolveEnvironment() throws Exception {
-      CLibrary.putenv("TEST_KEY", "secrethub://jasonshobe/secrethub-java/test");
       PointerByReference errMessage = new PointerByReference();
       String json = SecretHubLibrary.INSTANCE.Client_ResolveEnv(client, errMessage);
       String message = Client.getErrorMessage(errMessage);

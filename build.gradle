@@ -37,6 +37,7 @@ dependencies {
 }
 
 test {
+  environment "TEST_KEY", "secrethub://jasonshobe/secrethub-java/test"
   useJUnitPlatform {
     if(!project.hasProperty("includeIntegrationTests")) {
       excludeTags 'integration'
