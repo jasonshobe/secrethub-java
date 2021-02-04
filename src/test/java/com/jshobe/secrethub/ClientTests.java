@@ -34,9 +34,8 @@ import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -327,7 +326,8 @@ class ClientTests {
   @Test
   @DisplayName("should return date time")
   void shouldReturnDateTime() {
-    LocalDateTime expected = LocalDateTime.of(2021, 2, 3, 12, 30);
+    LocalDateTime expected = LocalDateTime
+        .ofEpochSecond(1612373400L, 0, OffsetDateTime.now().getOffset());
     LocalDateTime actual = Client.getDateTime(1612373400L);
     assertEquals(expected, actual);
   }

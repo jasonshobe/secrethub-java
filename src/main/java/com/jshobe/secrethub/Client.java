@@ -21,7 +21,9 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Map;
 import java.util.UUID;
 
@@ -32,6 +34,7 @@ public class Client implements AutoCloseable {
 
   private final SecretHubLibrary library;
   private volatile SecretHubLibrary.Client client;
+  private static final ZoneOffset OFFSET = OffsetDateTime.now().getOffset();
 
   /**
    * Creates a new instance of {@code Client}.
@@ -211,7 +214,7 @@ public class Client implements AutoCloseable {
    * @return the local date and time.
    */
   static LocalDateTime getDateTime(long timestamp) {
-    return LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault());
+    return LocalDateTime.ofEpochSecond(timestamp, 0, OFFSET);
   }
 
   /**
