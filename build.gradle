@@ -4,6 +4,7 @@ plugins {
   id 'java-library'
   id 'jacoco'
   id 'maven-publish'
+  id 'signing'
   id 'de.undercouch.download' version '4.1.1'
   id 'io.franzbecker.gradle-lombok' version '4.0.0'
   id 'org.jetbrains.gradle.plugin.idea-ext' version '0.7'
@@ -39,7 +40,7 @@ dependencies {
 test {
   environment "TEST_KEY", "secrethub://jasonshobe/secrethub-java/test"
   useJUnitPlatform {
-    if(!project.hasProperty("includeIntegrationTests")) {
+    if (!project.hasProperty("includeIntegrationTests")) {
       excludeTags 'integration'
     }
   }
@@ -78,7 +79,7 @@ jacocoTestCoverageVerification {
     rule {
       element = 'CLASS'
       excludes = [
-        'com.jshobe.secrethub.SecretHubLibrary.*'
+          'com.jshobe.secrethub.SecretHubLibrary.*'
       ]
       limit {
         counter = 'LINE'
@@ -89,7 +90,7 @@ jacocoTestCoverageVerification {
   }
 }
 
-if(project.hasProperty('verifyCoverage')) {
+if (project.hasProperty('verifyCoverage')) {
   check.dependsOn jacocoTestCoverageVerification
 }
 
@@ -125,137 +126,159 @@ limitations under the License.'''
       }
     }
   }
+}
 
-  task downloadNativeLibraries(type: Download) {
-    src([
+task downloadNativeLibraries(type: Download) {
+  src([
       'https://files.pythonhosted.org/packages/40/80/1422a3d8c79309d952dcf61af4f50fcf67e4bfe22c71dcc4e06ee684ace9/secrethub-0.1.1-cp36-cp36m-macosx_10_14_x86_64.whl',
       'https://files.pythonhosted.org/packages/43/8a/41e419be57678472131b528ecc0db420ca30f30b8e8073bfb1f4c8a5b846/secrethub-0.1.1-cp36-cp36m-manylinux2014_x86_64.whl',
       'https://files.pythonhosted.org/packages/e9/37/57a04ba72bf96a395df1b4e3e8f333a6069261f2d9df8d1632a1f759f334/secrethub-0.1.1-cp36-cp36m-win32.whl',
       'https://files.pythonhosted.org/packages/c0/85/0fdc7e4a7f2f4f4a658a9005b0c6702cf16120e2f0f0cd445f0fb14a01be/secrethub-0.1.1-cp36-cp36m-win_amd64.whl'
-    ])
-    dest "$buildDir/downloads"
-    onlyIfModified true
-  }
+  ])
+  dest "$buildDir/downloads"
+  onlyIfModified true
+}
 
-  task extractMacNativeLibrary(type: Copy) {
-    dependsOn downloadNativeLibraries
-    from zipTree("$buildDir/downloads/secrethub-0.1.1-cp36-cp36m-macosx_10_14_x86_64.whl").matching {
-      include 'secrethub/.dylibs/Client.dylib'
-    }
-    eachFile {
-      path = name
-    }
-    into "$buildDir/native/darwin"
-    rename 'Client\\.dylib', 'secrethub.dylib'
-    includeEmptyDirs = false
+task extractMacNativeLibrary(type: Copy) {
+  dependsOn downloadNativeLibraries
+  from zipTree("$buildDir/downloads/secrethub-0.1.1-cp36-cp36m-macosx_10_14_x86_64.whl").matching {
+    include 'secrethub/.dylibs/Client.dylib'
   }
-
-  task extractLinuxNativeLibrary(type: Copy) {
-    dependsOn downloadNativeLibraries
-    from zipTree("$buildDir/downloads/secrethub-0.1.1-cp36-cp36m-manylinux2014_x86_64.whl").matching {
-      include 'secrethub.libs/Client-*.so'
-    }
-    eachFile {
-      path = name
-    }
-    into "$buildDir/native/linux-x86-64"
-    rename 'Client-.+\\.so', 'libsecrethub.so'
-    includeEmptyDirs = false
+  eachFile {
+    path = name
   }
+  into "$buildDir/native/darwin"
+  rename 'Client\\.dylib', 'secrethub.dylib'
+  includeEmptyDirs = false
+}
 
-  task extractWin32NativeLibrary(type: Copy) {
-    dependsOn downloadNativeLibraries
-    from zipTree("$buildDir/downloads/secrethub-0.1.1-cp36-cp36m-win32.whl").matching {
-      include 'secrethub/CLIENT-*.dll'
-    }
-    eachFile {
-      path = name
-    }
-    into "$buildDir/native/win32-x86"
-    rename 'CLIENT-.+\\.dll', 'secrethub.dll'
-    includeEmptyDirs = false
+task extractLinuxNativeLibrary(type: Copy) {
+  dependsOn downloadNativeLibraries
+  from zipTree("$buildDir/downloads/secrethub-0.1.1-cp36-cp36m-manylinux2014_x86_64.whl").matching {
+    include 'secrethub.libs/Client-*.so'
   }
-
-  task extractWin64NativeLibrary(type: Copy) {
-    dependsOn downloadNativeLibraries
-    from zipTree("$buildDir/downloads/secrethub-0.1.1-cp36-cp36m-win_amd64.whl").matching {
-      include 'secrethub/CLIENT-*.dll'
-    }
-    eachFile {
-      path = name
-    }
-    into "$buildDir/native/win32-x86-64"
-    rename 'CLIENT-.+\\.dll', 'secrethub.dll'
-    includeEmptyDirs = false
+  eachFile {
+    path = name
   }
+  into "$buildDir/native/linux-x86-64"
+  rename 'Client-.+\\.so', 'libsecrethub.so'
+  includeEmptyDirs = false
+}
 
-  task extractNativeLibraries {
-    dependsOn extractMacNativeLibrary, extractLinuxNativeLibrary, extractWin32NativeLibrary, extractWin64NativeLibrary
+task extractWin32NativeLibrary(type: Copy) {
+  dependsOn downloadNativeLibraries
+  from zipTree("$buildDir/downloads/secrethub-0.1.1-cp36-cp36m-win32.whl").matching {
+    include 'secrethub/CLIENT-*.dll'
   }
-
-  task delombok(type: DelombokTask) {
-    dependsOn compileJava
-    ext.outputDir = file("$buildDir/delombok")
-    outputs.dir outputDir
-    sourceSets.main.java.srcDirs.each {
-      inputs.dir(it)
-      args(it, '-d', outputDir)
-    }
-    doFirst {
-      outputDir.deleteDir()
-    }
+  eachFile {
+    path = name
   }
+  into "$buildDir/native/win32-x86"
+  rename 'CLIENT-.+\\.dll', 'secrethub.dll'
+  includeEmptyDirs = false
+}
 
-  javadoc {
-    dependsOn delombok
-    source = delombok.outputDir
-    failOnError = false
-    title = 'SecretHub Java Client API'
-    options {
-      links 'https://docs.oracle.com/javase/8/docs/api/', 'http://java-native-access.github.io/jna/5.6.0/javadoc/'
-      windowTitle = 'SecretHub Java Client API'
-      // overview = 'src/main/resources/overview.html'
-      header = """<b>SecretHub Java Client API</b> <font size="-1">${project.version}</font>"""
-      bottom "<center>Copyright &copy; ${new Date().format('YYYY')} Jason Shobe </center>"
-    }
+task extractWin64NativeLibrary(type: Copy) {
+  dependsOn downloadNativeLibraries
+  from zipTree("$buildDir/downloads/secrethub-0.1.1-cp36-cp36m-win_amd64.whl").matching {
+    include 'secrethub/CLIENT-*.dll'
   }
+  eachFile {
+    path = name
+  }
+  into "$buildDir/native/win32-x86-64"
+  rename 'CLIENT-.+\\.dll', 'secrethub.dll'
+  includeEmptyDirs = false
+}
 
-  publishing {
-    publications {
-      maven(MavenPublication) {
-        from components.java
-        versionMapping {
-          usage('java-api') {
-            fromResolutionOf('runtimeClasspath')
+task extractNativeLibraries {
+  dependsOn extractMacNativeLibrary, extractLinuxNativeLibrary, extractWin32NativeLibrary, extractWin64NativeLibrary
+}
+
+task delombok(type: DelombokTask) {
+  dependsOn compileJava
+  ext.outputDir = file("$buildDir/delombok")
+  outputs.dir outputDir
+  sourceSets.main.java.srcDirs.each {
+    inputs.dir(it)
+    args(it, '-d', outputDir)
+  }
+  doFirst {
+    outputDir.deleteDir()
+  }
+}
+
+javadoc {
+  dependsOn delombok
+  source = delombok.outputDir
+  failOnError = false
+  title = 'SecretHub Java Client API'
+  options {
+    links 'https://docs.oracle.com/javase/8/docs/api/', 'http://java-native-access.github.io/jna/5.6.0/javadoc/'
+    windowTitle = 'SecretHub Java Client API'
+    overview = 'src/main/docs/overview.html'
+    stylesheetFile = file('src/main/docs/stylesheet.css')
+    header = """<b>SecretHub Java Client API</b> <font size="-1">${project.version}</font>"""
+    bottom "<center>Copyright &copy; ${new Date().format('YYYY')} Jason Shobe </center>"
+  }
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+      versionMapping {
+        usage('java-api') {
+          fromResolutionOf('runtimeClasspath')
+        }
+        usage('java-runtime') {
+          fromResolutionResult()
+        }
+        pom {
+          name = 'SecretHub Client for Java'
+          description = 'A library that provides a Java client for the SecretHub Secrets Management API.'
+          url = 'https://github.com/jasonshobe/secrethub-java'
+          licenses {
+            license {
+              name = 'The Apache License, Version 2.0'
+              url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            }
           }
-          usage('java-runtime') {
-            fromResolutionResult()
+          developers {
+            developer {
+              id = 'jasonshobe'
+              name = 'Jason Shobe'
+              email = 'jason.shobe@gmail.com'
+            }
           }
-          pom {
-            name = 'SecretHub Java Client Library'
-            description = 'A library that provides a Java client for the SecretHub Secrets Management API.'
+          scm {
+            connection = 'scm:git:https://github.com/jasonshobe/secrethub-java.git'
+            developerConnection = 'scm:git:https://github.com/jasonshobe/secrethub-java.git'
             url = 'https://github.com/jasonshobe/secrethub-java'
-            licenses {
-              license {
-                name = 'Apache License, Version 2.0'
-                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-              }
-            }
-            developers {
-              developer {
-                id = 'jasonshobe'
-                name = 'Jason Shobe'
-                email = 'jason.shobe@gmail.com'
-              }
-            }
-            scm {
-              connection = 'scm:git:https://github.com/jasonshobe/secrethub-java.git'
-              developerConnection = 'scm:git:https://github.com/jasonshobe/secrethub-java.git'
-              url = 'https://github.com/jasonshobe/secrethub-java'
-            }
           }
         }
       }
     }
   }
+  repositories {
+    maven {
+      credentials {
+        username project.hasProperty('mavenUsername') ? project.property('mavenUsername') : System.getenv('MAVEN_USERNAME')
+        password project.hasProperty('mavenPassword') ? project.property('mavenPassword') : System.getenv('MAVEN_PASSWORD')
+      }
+
+      def snapshotsUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
+      def releasesUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+      url = project.version.endsWith('-SNAPSHOT') ? snapshotsUrl : releasesUrl
+    }
+  }
+}
+
+signing {
+  def signingKeyId = findProperty('signingKeyId')
+  def signingKey = findProperty('signingKey')
+  def signingPassword = findProperty('signingPassword')
+  println signingKey
+  useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+  sign publishing.publications.mavenJava
 }

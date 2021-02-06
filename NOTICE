@@ -7,3 +7,6 @@ Copyright (c) 2018-2021 SecretHub. All rights reserved.
 This product contains the Java Native Access library
 (https://github.com/java-native-access/jna).
 Copyright (c) 2007 Timothy Wall, All rights reserved.
+
+This product contains the Jackson library
+(https://github.com/FasterXML/jackson).

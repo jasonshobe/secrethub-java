@@ -13,7 +13,7 @@ Add the dependency to your project:
 #### Using Maven
 
 ```xml
-<dependency>L
+<dependency>
   <groupId>com.jshobe.secrethub</groupId>
   <artifactId>secrethub-java</artifactId>
   <version>1.0.0</version>

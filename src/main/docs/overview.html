@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Overview</title>
+</head>
+<body>
+<p>A library that provides a Java client for the SecretHub Secrets Management API.</p>
+<p>
+  <a href="https://github.com/jasonshobe/secrethub-java">https://github.com/jasonshobe/secrethub-java</a>
+</p>
+
+<h2 id="installation">Installation</h2>
+
+<p>Add the dependency to your project:</p>
+
+<h4 id="using-maven">Using Maven</h4>
+
+<div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">dependency</span>&gt;
+  &lt;<span class="pl-ent">groupId</span>&gt;com.jshobe.secrethub&lt;/<span
+        class="pl-ent">groupId</span>&gt;
+  &lt;<span class="pl-ent">artifactId</span>&gt;secrethub-java&lt;/<span
+        class="pl-ent">artifactId</span>&gt;
+  &lt;<span class="pl-ent">version</span>&gt;1.0.0&lt;/<span class="pl-ent">version</span>&gt;
+&lt;/<span class="pl-ent">dependency</span>&gt;</pre>
+</div>
+
+<h4 id="using-gradle">Using Gradle</h4>
+
+<div class="highlight highlight-source-groovy">
+  <pre>implementation <span class="pl-s"><span class="pl-pds">'</span>com.jshobe.secrethub:secrethub-java:1.0.0<span class="pl-pds">'</span></span></pre>
+</div>
+
+<h2 id="usage">Usage</h2>
+
+<p>Put the credentials for your SecretHub service account in the
+  <code>$HOME/.secrethub/credential</code> file or in the <code>SECRETHUB_CREDENTIAL</code>
+  environment variable.</p>
+
+<div class="callout note-block">
+  <h4>NOTE</h4>
+  <p>It is not necessary to install the SecretHub binaries to use this
+    library.</p>
+</div>
+
+<p>In your Java code, create an instance of <code>Client</code> and start using it.</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">import</span> <span class="pl-smi">com.jshobe.secrethub.Client</span>;
+<span class="pl-k">import</span> <span class="pl-smi">com.jshobe.secrethub.SecretHubException</span>;
+
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">MyClass</span> {
+  <span class="pl-k">public</span> <span class="pl-k">static</span> <span
+        class="pl-k">void</span> <span class="pl-en">main</span>(<span class="pl-k">String</span>[] <span
+        class="pl-v">args</span>) {
+    <span class="pl-k">try</span> (<span class="pl-smi">Client</span> client <span
+        class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Client</span>()) {
+      <span class="pl-smi">String</span> secret <span class="pl-k">=</span> client<span
+        class="pl-k">.</span>readString(<span class="pl-s"><span class="pl-pds">"</span>com/example/test<span
+        class="pl-pds">"</span></span>);
+      <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span
+        class="pl-s"><span class="pl-pds">"</span>MY SECRET: <span
+        class="pl-pds">"</span></span> <span class="pl-k">+</span> secret);
+    } <span class="pl-k">catch</span> (<span class="pl-smi">SecretHubException</span> e) {
+      e<span class="pl-k">.</span>printStackTrace();
+    }
+  }
+}</pre>
+</div>
+
+<p>The client API closely follows what is provided by the
+  <a href="https://pkg.go.dev/github.com/secrethub/secrethub-go">SecretHub SDK</a>.
+
+<h2 id="license">License</h2>
+
+<p>The SecretHub Client for Java is releases under version 2.0 of the
+  <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache License</a>.</p>
+</body>
+</html>
