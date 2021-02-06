@@ -59,7 +59,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: echo "::set-output name=release_version::v$(grep -e "^version '" build.gradle | awk '{print $2}' | tr -d "'")"
       - name: Create Github Release
-        if: github.ref == 'refs/heads/main
+        if: github.ref == 'refs/heads/main'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
