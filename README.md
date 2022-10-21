@@ -1,5 +1,7 @@
 # SecretHub Client for Java
 
+__SecretHub has been discontinued, so this project has been archived.__
+
 [![Build Status](https://github.com/jasonshobe/secrethub-java/workflows/build/badge.svg)]()
 [![Apache 2.0](https://img.shields.io/github/license/jasonshobe/secrethub-java)]()
 ![Maven Central](https://img.shields.io/maven-central/v/com.jshobe.secrethub/secrethub-java)
